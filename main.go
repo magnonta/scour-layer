@@ -8,6 +8,8 @@ import (
 	"os"
 	"strconv"
 	"time"
+
+	"github.com/briandowns/spinner"
 )
 
 func check(url, port string) (urltime float64, urlsize int) {
@@ -54,9 +56,14 @@ func check(url, port string) (urltime float64, urlsize int) {
 func main() {
 	fmt.Printf("GoLang httping - PINGING %s\n", os.Args[1])
 
+	// Define spinner
+	s := spinner.New(spinner.CharSets[23], 100*time.Millisecond)
+	s.Color("white")
+	s.Start()
+	time.Sleep(1 * time.Second)
+
 	port := "80"
 	// Do we have port defined ?
-
 	if os.Args[2] != "" {
 		port = os.Args[2]
 	}
@@ -66,7 +73,6 @@ func main() {
 	for {
 		seq = seq + 1
 		t, s := check(os.Args[1], port)
-
 		switch port {
 		case "80":
 			fmt.Printf("pingando http://%s:%s, seq=%d time=%s bytes=%d\n", os.Args[1], port, seq, strconv.FormatFloat(t, 'f', 3, 64), s)
