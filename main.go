@@ -20,7 +20,6 @@ func check(url, port string) (urltime float64, urlsize int) {
 	case "80":
 		domain = "http://" + url
 	case "443":
-
 		domain = "https://" + url
 	}
 
@@ -41,12 +40,12 @@ func check(url, port string) (urltime float64, urlsize int) {
 			defer resp.Body.Close()
 			body, _ := ioutil.ReadAll(resp.Body)
 
-			url_size := len(body)
+			urlSize := len(body)
 			//fmt.Printf("%s", body)
 			msec := time.Since(t0)
-			url_time := msec.Seconds() * float64(time.Second/time.Millisecond)
+			urlTime := msec.Seconds() * float64(time.Second/time.Millisecond)
 
-			return url_time, url_size
+			return urlTime, urlSize
 		}
 	}
 	return
@@ -57,6 +56,7 @@ func main() {
 
 	port := "80"
 	// Do we have port defined ?
+
 	if os.Args[2] != "" {
 		port = os.Args[2]
 	}
@@ -66,7 +66,13 @@ func main() {
 	for {
 		seq = seq + 1
 		t, s := check(os.Args[1], port)
-		fmt.Printf("pingando %s:%s, seq=%d time=%s bytes=%d\n", os.Args[1], port, seq, strconv.FormatFloat(t, 'f', 3, 64), s)
+
+		switch port {
+		case "80":
+			fmt.Printf("pingando http://%s:%s, seq=%d time=%s bytes=%d\n", os.Args[1], port, seq, strconv.FormatFloat(t, 'f', 3, 64), s)
+		case "443":
+			fmt.Printf("pingando https://%s:%s, seq=%d time=%s bytes=%d\n", os.Args[1], port, seq, strconv.FormatFloat(t, 'f', 3, 64), s)
+		}
 		time.Sleep(1 * time.Second)
 	}
 
