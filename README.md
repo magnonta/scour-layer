@@ -9,4 +9,4 @@ go run main.go URI PORT(80 for HTTP or 443 for HTTPS)
 
     - Ex.: 
 
-![exp1](images/exp1.PNG)
+![exemplo1](images/exemplo1.png)
