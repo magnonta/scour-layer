@@ -16,6 +16,9 @@ func check(url, port string) (urltime float64, urlsize int) {
 	t0 := time.Now()
 	client := &http.Client{}
 
+	if port == "" {
+		port = "80"
+	}
 	// default case: HTTP request
 	domain := "http://" + url + ":" + port
 	switch port {
@@ -64,7 +67,9 @@ func main() {
 
 	port := "80"
 	// Do we have port defined ?
-	if os.Args[2] != "" {
+	if len(os.Args) < 3 {
+		port = "80"
+	} else {
 		port = os.Args[2]
 	}
 
@@ -73,11 +78,12 @@ func main() {
 	for {
 		seq = seq + 1
 		t, s := check(os.Args[1], port)
+
 		switch port {
 		case "80":
-			fmt.Printf("pingando http://%s:%s, seq=%d time=%s bytes=%d\n", os.Args[1], port, seq, strconv.FormatFloat(t, 'f', 3, 64), s)
+			fmt.Printf("pingando http://%s:%s seq=%d time=%s bytes=%d\n", os.Args[1], port, seq, strconv.FormatFloat(t, 'f', 3, 64), s)
 		case "443":
-			fmt.Printf("pingando https://%s:%s, seq=%d time=%s bytes=%d\n", os.Args[1], port, seq, strconv.FormatFloat(t, 'f', 3, 64), s)
+			fmt.Printf("pingando https://%s:%s seq=%d time=%s bytes=%d\n", os.Args[1], port, seq, strconv.FormatFloat(t, 'f', 3, 64), s)
 		}
 		time.Sleep(1 * time.Second)
 	}
