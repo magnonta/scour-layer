@@ -1,11 +1,11 @@
+// Scour-layer
+// Created by: https://github.com/magnonta
+
 package main
 
 import (
 	"flag"
 	"fmt"
-	"io/ioutil"
-	"log"
-	"net/http"
 	"os"
 	"strconv"
 	"time"
@@ -24,54 +24,18 @@ func init() {
 	flag.StringVar(hlp, "h", "", "")
 }
 
-func check(uri, url, prt, port string) (urltime float64, urlsize int) {
-
-	t0 := time.Now()
-	client := &http.Client{}
-
-	if port == "" {
-		port = "80"
-	}
-	// default case: HTTP request
-	domain := "http://" + url + ":" + port
-	switch port {
-	case "80":
-		domain = "http://" + url
-	case "443":
-		domain = "https://" + url
-	}
-
-	req, err := http.NewRequest("GET", domain, nil)
-	if err != nil {
-		// handle error
-		log.Fatalf("|----- Não foi possível conectar %s", url)
-	} else {
-		req.Proto = "HTTP/1.1"
-		req.ProtoMinor = 0
-		req.Header.Set("User-Agent", "GoLang httping v0.1")
-
-		resp, err := client.Do(req)
-		if err != nil {
-			// handle error
-			log.Fatalf("|----- Não foi possível conectar %s\n", url)
-		} else {
-			defer resp.Body.Close()
-			body, _ := ioutil.ReadAll(resp.Body)
-
-			urlSize := len(body)
-			msec := time.Since(t0)
-			urlTime := msec.Seconds() * float64(time.Second/time.Millisecond)
-
-			return urlTime, urlSize
-		}
-	}
-	return
-}
-
 func main() {
 	flag.Parse()
 	var pr = *prt
 	var ur = *uri
+
+	// var x string
+
+	// if os.Args[1] == "help" {
+	// 	x = help()
+	// }
+
+	// fmt.Printf("%v", x)
 
 	fmt.Printf("GoLang httping - PINGING %s\n", os.Args[2])
 
@@ -93,7 +57,7 @@ func main() {
 	seq := 0
 	for {
 		seq = seq + 1
-		t, s := check(ur, os.Args[2], pr, port)
+		t, s := sendGet(ur, os.Args[2], pr, port)
 
 		switch port {
 		case "80":
